@@ -9,7 +9,43 @@ var progress = document.querySelector("#progress");
 var tGastos = 0;
 var disponible = 0;
 
+async function cargarCategorias() {
+    try {
+        const dato = new FormData();
+        dato.append("action", "loadCategorias");
 
+        let respuesta = await fetch("categoria.php", { method: 'POST', body: dato });
+       
+        
+        let categorias = await respuesta.json();
+        
+        
+        let selectCate = document.getElementById('filtrarcategoria');
+        let selectEditCate = document.getElementById('ecategoria');
+        let selectAddCate = document.getElementById('categoria');
+
+
+        
+        
+        selectCate.innerHTML = '<option value="todos">todos</option>';
+        selectEditCate.innerHTML = '';
+        selectAddCate.innerHTML = '';
+
+        
+        categorias.nombre.forEach(categoria => {
+            let option = document.createElement('option');
+            option.value = categoria;
+            option.textContent = categoria;
+            
+            selectCate.appendChild(option.cloneNode(true));
+            selectEditCate.appendChild(option.cloneNode(true));
+            selectAddCate.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error al cargar las categorías:', error);
+    }
+}
+ cargarCategorias();
 
 const inicio = () => {
     tPresupuesto = parseInt(localStorage.getItem("presupuesto"));
@@ -18,7 +54,7 @@ const inicio = () => {
         divGastos.classList.remove("d-none");
         divPresupuesto.classList.add("d-none");
         divGastos.classList.add("d-block");
-        totalPresupuesto.innerHTML = `$ ${tPresupuesto.toFixed(2)}`;
+        totalPresupuesto.innerHTML =` $ ${tPresupuesto.toFixed(2)}`;
         mostrarGastos();
     } else {
         divPresupuesto.classList.remove("d-none");
@@ -33,7 +69,7 @@ const inicio = () => {
 btnPresupuesto.onclick = () => {
     tPresupuesto = parseInt(presupuesto.value);
     if (tPresupuesto == 0 || tPresupuesto < 0 || isNaN(tPresupuesto)) {
-        Swal.fire({ icon: "error", title: "ERROR", text: "Esta mallll" });
+        Swal.fire({ icon: "error", title: "ERROR", text: "Presupuesto mayor a 0" });
         return;
     }
     localStorage.setItem('presupuesto', tPresupuesto);
@@ -55,12 +91,12 @@ const guardarGasto = async () => {
     let categoria = document.getElementById("categoria").value;
 
     if (descripcion.trim() === "" || isNaN(costo) || costo <= 0) {
-        Swal.fire({ icon: "error", title: "ERROR", text: "Campos vacios" });
+        Swal.fire({ icon: "error", title: "ERROR", text: "DATOS INCORRECTOS" });
         return;
     }
 
     if (costo > disponible) {
-        Swal.fire({ icon: "error", title: "ERROR", text: "no te alcanza" });
+        Swal.fire({ icon: "error", title: "ERROR", text: "PRESUPUESTO INCORECTO" });
         return;
     }
 
@@ -68,7 +104,7 @@ const guardarGasto = async () => {
     datos.append("descripcion", descripcion);
     datos.append("costo", costo);
     datos.append("categoria", categoria);
-    datos.append("action", "add");
+    datos.append("action", "guardarGasto");
 
     let respuesta = await fetch("1php.php", { method: 'POST', body: datos });
     let json = await respuesta.json();
@@ -81,20 +117,20 @@ const guardarGasto = async () => {
         gastos.push(gasto);
         localStorage.setItem("gastos", JSON.stringify(gastos));
 
-        Swal.fire({ icon: "success", title: "Registrado", text: "Registrado" });
+        Swal.fire({ icon: "success", title: "ESOO", text: "YA SE AGREGO"});
         bootstrap.Modal.getInstance(document.getElementById("nuevoGasto")).hide();
 
         document.getElementById("descripcion").value = "";
         document.getElementById("costo").value = "";
         document.getElementById("categoria").selectedIndex = 0;
     } else {
-        Swal.fire({ icon: "error", title: "ERROR" });
+        Swal.fire({ icon: "error", title: "UPSI", text: "ahc" });
     }
 
     mostrarGastos();
 }
 
-document.getElementById("filtrarCategoria").addEventListener("change", (event) => {
+document.getElementById("filtrarcategoria").addEventListener("change", (event) => {
     const categoriaSeleccionada = event.target.value;
     mostrarGastos(categoriaSeleccionada);
 });
@@ -102,7 +138,7 @@ document.getElementById("filtrarCategoria").addEventListener("change", (event) =
 const mostrarGastos = async (categoria = "todos") => {
     try {
         const datos2 = new FormData();
-        datos2.append("action", "selectAll");
+        datos2.append("action", "selectGastos");
         let respuesta = await fetch("1php.php", { method: 'POST', body: datos2 });
         let json = await respuesta.json();
 
@@ -110,7 +146,7 @@ const mostrarGastos = async (categoria = "todos") => {
         let gastosHTML = ``;
 
         if (json.data.length === 0) {
-            document.getElementById('listaGastos').innerHTML = `<b>No hay gastos</b>`;
+            document.getElementById('listaGastos').innerHTML =`<b>No hay gastos</b>`;
             tGastos = 0;
             pintarDatos();
             return;
@@ -122,20 +158,19 @@ const mostrarGastos = async (categoria = "todos") => {
         json.data.forEach(gasto => {
             if (categoria === gasto[3] || categoria === "todos") {
                 gastosHTML += `
-                    <div class="card text-center w-75 m-auto mt-3 shadow p-2 " >
-                        <div class="row">
-                            <div class="col"><img src="img/${gasto[3]}.png" class="imgCategoria" width="200px" height="200px"></div>
-                            <div class="col text-start">
-                                <p><b>DESCRIPCIÓN: </b><small>${gasto[1]}</small></p>
-                                <p><b>COSTO: </b><small>$${parseFloat(gasto[2]).toFixed(2)}</small></p></div>
-                            <div class="col">
-                                <button class="btn btn-outline-primary mb-2" onclick="mostrarg2(${gasto[0]})" data-bs-toggle="modal" data-bs-target="#editarGasto">Actualizar</button>
-                                <button class="btn btn-outline-danger mb-2" onclick="deletegasto(${gasto[0]})">DEL 
-                                </button>
-                            </div>
-                        </div>  
-                    </div>
-                `;
+                    <div class="card text-center w-100 m-auto mt-3 p-2">
+            <div class="row">
+            <div class="col"><img src="img/${gasto[3]}.png" class="imgCategoria" width="200px" height="200px"></div>
+            <div class="col text-start">
+            <p><b>Descripcion:</b> <small>${gasto[1]}</small></p>            
+            <p><b>Costo:</b> <small>$${parseFloat(gasto[2]).toFixed(2)}</small></p>
+            </div>
+            <div class="col">
+            <button class="btn btn-outline-primary" onclick="mostrarg2(${gasto[0]})" data-bs-toggle="modal" data-bs-target="#editarGasto">editar</button><br><br>
+            <button class="btn btn-outline-danger" onclick="deletegasto(${gasto[0]})"><i class="bi bi-trash"></i></button>
+</div>
+            </div>
+    </div> `
                 tGastos += parseFloat(gasto[2]);
             }
         });
@@ -181,7 +216,7 @@ const mostrarg2 = async (id) => {
 }
 
 
-actalualizarGasto.onclick = async () => {
+const actualizarGasto= async () => {
     gastos = JSON.parse(localStorage.getItem("gastos")) || [];
 
     let descripcion = document.getElementById("edescripcion").value;
@@ -190,13 +225,13 @@ actalualizarGasto.onclick = async () => {
     let id = parseInt(document.getElementById("eindex").value);
 
     if (descripcion.trim() === "" || isNaN(costo) || costo <= 0) {
-        Swal.fire({ icon: "error", title: "ERROR", text: "ERROR" });
+        Swal.fire({ icon: "error", title: "ERROR", text: "DATOS INCORRECTOS" });
         return;
     }
 
     let costoAnterior = parseFloat(gastos[index].costo);
     if (costo > (costoAnterior + disponible)) {
-        Swal.fire({ icon: "error", title: "ERROR", text: "YY te quedaste sin dinero jajajaj" });
+        Swal.fire({ icon: "error", title: "ERROR", text: "YA NO TIENES FONDOS" });
         return;
     }
 
@@ -205,21 +240,21 @@ actalualizarGasto.onclick = async () => {
     datos.append("descripcion", descripcion);
     datos.append("costo", costo);
     datos.append("categoria", categoria);
-    datos.append('action', 'update');
+    datos.append('action', 'updateGasto');
 
 
     let respuesta = await fetch("1php.php", { method: 'POST', body: datos });
     let json = await respuesta.json();
 
     if (json.success == true) {
-        Swal.fire({ title: "¡ACTUALIZACIÓN ÉXITOSA!", text: json.mensaje, icon: "success" });
+        Swal.fire({ title: "ESO se actualizo", text: "", icon: "success" });
     } else {
         Swal.fire({
-            title: "ERROR", text: json.mensaje, icon: "error"
+            title: "Ups no se actualizo", text: "", icon: "error"
         });
     }
 
-    Swal.fire({ icon: "success", title: "Actualizado", text: "Actualizado" });
+    Swal.fire({ title: "Eso abuelita", text: "", icon: "success" });
     bootstrap.Modal.getInstance(document.getElementById("editarGasto")).hide();
     mostrarGastos();
 }
@@ -227,10 +262,14 @@ actalualizarGasto.onclick = async () => {
 
 const deletegasto = async (index) => {
     Swal.fire({
-        title: "Estás seguro de eliminar?",
+        title: " Esta seguro de Eliminar?",
         showDenyButton: true,
-        confirmButtonText: "Si",
-        denyButtonText: "No"
+        showCancelButton: false,
+        confirmButtonText: "SI",
+        denyButtonText: `NO`,
+        cancelButtonColor: "#dc3545",
+        confirmButtonColor: "#198754",
+        denyButtonColor: "#dc3545",
 
     }).then(async (result) => {
 
@@ -243,10 +282,10 @@ const deletegasto = async (index) => {
             let json = await respuesta.json();
 
             if (json.success == true) {
-                Swal.fire("ELIMINado", "", "success");
+                Swal.fire("BORRADO CON EXITO", "", "success");
             } else {
                 Swal.fire({
-                    title: "ERROR", text: json.mensaje, icon: "error"
+                    title: "ERROR", text:"", icon: "error"
                 });
             }
             Swal.fire("ELIMINADO", "", "success");
@@ -261,7 +300,7 @@ const deletegasto = async (index) => {
 
 const reset = () => {
     Swal.fire({
-        title: " Esta seguro de salir??",
+        title: " Esta seguro de salir?",
         showDenyButton: true,
         showCancelButton: false,
         confirmButtonText: "SI",
@@ -278,11 +317,11 @@ const reset = () => {
            
             gastoid.append('action', 'delete1');
 
-            let respuesta = await fetch("1php.php", { method: 'POST', body: gastoid });
+            let respuesta = await fetch('1php.php', { method: 'POST', body: gastoid });
             let json = await respuesta.json();
 
             if (json.success == true) {
-                Swal.fire("BD ELIMINADA", "", "success");
+                Swal.fire("EL GASTO SE ELIMINÓ", "", "success");
             } else {
                 Swal.fire({
                     title: "ERROR", text: json.mensaje, icon: "error"

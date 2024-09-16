@@ -8,7 +8,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
  $action=$_REQUEST['action'];
 
 switch($action){
-    case "add":
+    case "guardarGasto":
     
     $a=$_POST['descripcion'];
     $b=$_POST['costo'];
@@ -27,7 +27,7 @@ switch($action){
        $valido['mensaje']="SE GUARDÓ CORRECTAMENTE";
     }else{
         $valido['success']=false;
-       $valido['mensaje']="ERROR AL GUARDAR EN BD"; 
+       $valido['mensaje']="NO SE GUARDO"; 
     }
     
 
@@ -35,7 +35,7 @@ echo json_encode($valido);
 
 break;
 
-case "selectAll":
+case "selectGastos":
 
     $sql = "SELECT ga.idgasto, ga.descripcion, ga.monto, c.categoria 
     FROM gasto ga
@@ -62,10 +62,10 @@ case "delete":
 
     if($cx->query($sql)){
        $valido['success']=true;
-       $valido['mensaje']="SE ELIMINÓ CORRECTAMENTE";
+       $valido['mensaje']="EXITO SE BORRO";
     }else{
         $valido['success']=false;
-       $valido['mensaje']="ERROR AL ELIMINAR EN BD"; 
+       $valido['mensaje']="NO SE BORRO EN LA BASE DE DATOS"; 
     }
 
 }else{
@@ -73,21 +73,20 @@ $valido['success']=false;
 $valido['mensaje']="ERROR AL ELIMINAR";
 }
 echo json_encode($valido);
+
 break;
-
-
 case "delete1":
     if($_POST){
-    $id=$_POST['id'];
+    
 
     $sql="DELETE FROM gasto";
 
     if($cx->query($sql)){
        $valido['success']=true;
-       $valido['mensaje']="SE ELIMINÓ CORRECTAMENTE";
+       $valido['mensaje']="EXITO SE BORRO";
     }else{
         $valido['success']=false;
-       $valido['mensaje']="ERROR AL ELIMINAR EN BD"; 
+       $valido['mensaje']="NO SE BORRO EN LA BASE DE DATOS"; 
     }
 
 }else{
@@ -95,15 +94,6 @@ $valido['success']=false;
 $valido['mensaje']="ERROR AL ELIMINAR";
 }
 echo json_encode($valido);
-
-
-
-
-
-
-
-
-
 
 break;
 case "select":
@@ -143,7 +133,7 @@ echo json_encode($valido);
 
 break;
 
-case "update":
+case "updateGasto":
 
     if($_POST){
 
@@ -164,18 +154,18 @@ case "update":
 
         if ($cx->query($sql_update)) {
             $valido['success'] = true;
-            $valido['mensaje'] = "SE ACTUALIZÓ CORRECTAMENTE EL CONTACTO";
+            $valido['mensaje'] = "";
         } else {
             $valido['success'] = false;
-            $valido['mensaje'] = "ERROR AL ACTUALIZAR EN BD";
+            $valido['mensaje'] = "No se actualizo en la base";
         }
     } else {
         $valido['success'] = false;
-        $valido['mensaje'] = "CATEGORÍA NO ENCONTRADA";
+        $valido['mensaje'] = "Categoria no encontrada";
     }
 } else {
     $valido['success'] = false;
-    $valido['mensaje'] = "ERROR AL ACTUALIZAR";
+    $valido['mensaje'] = "Ups no se actualizo";
 }
 
 echo json_encode($valido);

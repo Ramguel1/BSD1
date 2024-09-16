@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-09-2024 a las 06:02:04
+-- Tiempo de generación: 16-09-2024 a las 22:34:35
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `cgastos`
+-- Base de datos: `controlg`
 --
 
 -- --------------------------------------------------------
@@ -28,8 +28,8 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `categoria` (
-  `idcategoria` int(200) NOT NULL,
-  `categoria` varchar(30) NOT NULL
+  `idcategoria` int(11) NOT NULL,
+  `categoria` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -37,14 +37,14 @@ CREATE TABLE `categoria` (
 --
 
 INSERT INTO `categoria` (`idcategoria`, `categoria`) VALUES
-(1, 'TODO'),
+(1, 'Todos'),
 (2, 'comida'),
 (3, 'ahorro'),
 (4, 'casa'),
 (5, 'ocio'),
 (6, 'salud'),
 (7, 'varios'),
-(8, 'suscripciones');
+(8, 'suscripcion');
 
 -- --------------------------------------------------------
 
@@ -53,10 +53,10 @@ INSERT INTO `categoria` (`idcategoria`, `categoria`) VALUES
 --
 
 CREATE TABLE `gasto` (
-  `idgasto` int(200) NOT NULL,
-  `descripcion` varchar(60) NOT NULL,
-  `monto` int(60) NOT NULL,
-  `idcategoria` int(60) NOT NULL
+  `idgasto` int(11) NOT NULL,
+  `descripcion` varchar(50) DEFAULT NULL,
+  `monto` int(20) DEFAULT NULL,
+  `idcategoria` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -64,7 +64,10 @@ CREATE TABLE `gasto` (
 --
 
 INSERT INTO `gasto` (`idgasto`, `descripcion`, `monto`, `idcategoria`) VALUES
-(16, 'foto', 11, 6);
+(52, 'yaa', 100, 4),
+(53, 'ddd', 12, 5),
+(66, 'ddd', 13, 2),
+(68, 'yaa?', 100, 3);
 
 --
 -- Índices para tablas volcadas
@@ -80,7 +83,8 @@ ALTER TABLE `categoria`
 -- Indices de la tabla `gasto`
 --
 ALTER TABLE `gasto`
-  ADD PRIMARY KEY (`idgasto`);
+  ADD PRIMARY KEY (`idgasto`),
+  ADD KEY `idcategoria` (`idcategoria`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -90,13 +94,23 @@ ALTER TABLE `gasto`
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `idcategoria` int(200) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idcategoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `gasto`
 --
 ALTER TABLE `gasto`
-  MODIFY `idgasto` int(200) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `idgasto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `gasto`
+--
+ALTER TABLE `gasto`
+  ADD CONSTRAINT `gasto_ibfk_1` FOREIGN KEY (`idcategoria`) REFERENCES `categoria` (`idcategoria`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,3 +1,3 @@
 <?php
-$cx=mysqli_connect("localhost","root","","cgastos");
+$cx=mysqli_connect("localhost","root","","controlg");
 ?>
