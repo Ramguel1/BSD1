@@ -91,12 +91,12 @@ const guardarGasto = async () => {
     let categoria = document.getElementById("categoria").value;
 
     if (descripcion.trim() === "" || isNaN(costo) || costo <= 0) {
-        Swal.fire({ icon: "error", title: "ERROR", text: "DATOS INCORRECTOS" });
+        Swal.fire({ icon: "error", title: "ERROR", text: "mal" });
         return;
     }
 
     if (costo > disponible) {
-        Swal.fire({ icon: "error", title: "ERROR", text: "PRESUPUESTO INCORECTO" });
+        Swal.fire({ icon: "error", title: "ERROR", text: "Presusupuesto mal" });
         return;
     }
 
@@ -117,7 +117,7 @@ const guardarGasto = async () => {
         gastos.push(gasto);
         localStorage.setItem("gastos", JSON.stringify(gastos));
 
-        Swal.fire({ icon: "success", title: "ESOO", text: "YA SE AGREGO"});
+        Swal.fire({ icon: "success", title: "add", text: "agregado"});
         bootstrap.Modal.getInstance(document.getElementById("nuevoGasto")).hide();
 
         document.getElementById("descripcion").value = "";
@@ -225,13 +225,13 @@ const actualizarGasto= async () => {
     let id = parseInt(document.getElementById("eindex").value);
 
     if (descripcion.trim() === "" || isNaN(costo) || costo <= 0) {
-        Swal.fire({ icon: "error", title: "ERROR", text: "DATOS INCORRECTOS" });
+        Swal.fire({ icon: "error", title: "ERROR", text: "Mal" });
         return;
     }
 
     let costoAnterior = parseFloat(gastos[index].costo);
     if (costo > (costoAnterior + disponible)) {
-        Swal.fire({ icon: "error", title: "ERROR", text: "YA NO TIENES FONDOS" });
+        Swal.fire({ icon: "error", title: "ERROR", text: "Ya no te alcanza" });
         return;
     }
 
@@ -247,14 +247,14 @@ const actualizarGasto= async () => {
     let json = await respuesta.json();
 
     if (json.success == true) {
-        Swal.fire({ title: "ESO se actualizo", text: "", icon: "success" });
+        Swal.fire({ title: "actualizado", text: "", icon: "success" });
     } else {
         Swal.fire({
-            title: "Ups no se actualizo", text: "", icon: "error"
+            title: "error", text: "", icon: "error"
         });
     }
 
-    Swal.fire({ title: "Eso abuelita", text: "", icon: "success" });
+    Swal.fire({ title: "actualizado", text: "", icon: "success" });
     bootstrap.Modal.getInstance(document.getElementById("editarGasto")).hide();
     mostrarGastos();
 }
@@ -282,13 +282,13 @@ const deletegasto = async (index) => {
             let json = await respuesta.json();
 
             if (json.success == true) {
-                Swal.fire("BORRADO CON EXITO", "", "success");
+                Swal.fire("DEL", "", "success");
             } else {
                 Swal.fire({
                     title: "ERROR", text:"", icon: "error"
                 });
             }
-            Swal.fire("ELIMINADO", "", "success");
+            Swal.fire("eliminado", "", "success");
             mostrarGastos();
             pintarDatos();
 
@@ -300,7 +300,7 @@ const deletegasto = async (index) => {
 
 const reset = () => {
     Swal.fire({
-        title: " Esta seguro de salir?",
+        title: "quieres salir?",
         showDenyButton: true,
         showCancelButton: false,
         confirmButtonText: "SI",
@@ -321,7 +321,7 @@ const reset = () => {
             let json = await respuesta.json();
 
             if (json.success == true) {
-                Swal.fire("EL GASTO SE ELIMINÓ", "", "success");
+                Swal.fire("DEL", "", "success");
             } else {
                 Swal.fire({
                     title: "ERROR", text: json.mensaje, icon: "error"

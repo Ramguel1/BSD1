@@ -24,10 +24,10 @@ switch($action){
     $sql="INSERT INTO gasto VALUES (null,'$a','$b', '$id_c')";
     if($cx->query($sql)){
        $valido['success']=true;
-       $valido['mensaje']="SE GUARDÓ CORRECTAMENTE";
+       $valido['mensaje']="guardado";
     }else{
         $valido['success']=false;
-       $valido['mensaje']="NO SE GUARDO"; 
+       $valido['mensaje']="error"; 
     }
     
 
@@ -62,15 +62,15 @@ case "delete":
 
     if($cx->query($sql)){
        $valido['success']=true;
-       $valido['mensaje']="EXITO SE BORRO";
+       $valido['mensaje']="borrado";
     }else{
         $valido['success']=false;
-       $valido['mensaje']="NO SE BORRO EN LA BASE DE DATOS"; 
+       $valido['mensaje']="mal"; 
     }
 
 }else{
 $valido['success']=false;
-$valido['mensaje']="ERROR AL ELIMINAR";
+$valido['mensaje']="error";
 }
 echo json_encode($valido);
 
@@ -83,15 +83,15 @@ case "delete1":
 
     if($cx->query($sql)){
        $valido['success']=true;
-       $valido['mensaje']="EXITO SE BORRO";
+       $valido['mensaje']="eliminado";
     }else{
         $valido['success']=false;
-       $valido['mensaje']="NO SE BORRO EN LA BASE DE DATOS"; 
+       $valido['mensaje']="error"; 
     }
 
 }else{
 $valido['success']=false;
-$valido['mensaje']="ERROR AL ELIMINAR";
+$valido['mensaje']="error";
 }
 echo json_encode($valido);
 
@@ -117,7 +117,7 @@ case "select":
                 $row = $res->fetch_array();
             
                 $valido['success'] = true;
-                $valido['mensaje'] = "SE ENCONTRÓ GASTO";
+                $valido['mensaje'] = "bien";
             
                 $valido['id'] = $row[0];
                 $valido['descripcion'] = $row[1];
@@ -125,7 +125,7 @@ case "select":
                 $valido['categoria'] = $row[3];
             } else {
                 $valido['success'] = false;
-                $valido['mensaje'] = "ERROR AL ENCONTRAR GASTO";
+                $valido['mensaje'] = "error";
             }
             
 
@@ -157,15 +157,15 @@ case "updateGasto":
             $valido['mensaje'] = "";
         } else {
             $valido['success'] = false;
-            $valido['mensaje'] = "No se actualizo en la base";
+            $valido['mensaje'] = "no se actualizo";
         }
     } else {
         $valido['success'] = false;
-        $valido['mensaje'] = "Categoria no encontrada";
+        $valido['mensaje'] = "error";
     }
 } else {
     $valido['success'] = false;
-    $valido['mensaje'] = "Ups no se actualizo";
+    $valido['mensaje'] = "mal";
 }
 
 echo json_encode($valido);
